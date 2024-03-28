@@ -13,7 +13,7 @@ const resolvers = {
     },
   },
   Mutation: {
-    login: async (_, { email, password }) => {
+    login: async (parent, { email, password }) => {
       const user = await User.findOne({ email });
       if (!user) {
         throw new AuthenticationError('Incorrect email or password');
@@ -29,12 +29,12 @@ const resolvers = {
 
       return { token, user };
     },
-    addUser: async (_, args) => {
+    addUser: async (parent, args) => {
       const user = await User.create(args);
       const token = signToken(user);
       return { token, user };
     },
-    saveBook: async (_, { bookData }, context) => {
+    saveBook: async (parent, { bookData }, context) => {
       if (context.user) {
         const updatedUser = await User.findOneAndUpdate(
           { _id: context.user._id },
@@ -45,7 +45,7 @@ const resolvers = {
       }
       throw new AuthenticationError('You are not authenticated');
     },
-    removeBook: async (_, { bookId }, context) => {
+    removeBook: async (parent, { bookId }, context) => {
       if (context.user) {
         const updatedUser = await User.findOneAndUpdate(
           { _id: context.user._id },
